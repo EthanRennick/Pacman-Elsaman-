@@ -36,7 +36,7 @@ sf::Sprite Cell::getSprite()
 
 void Cell::loadTextures()
 {
-	
+	//make empty tile the normal black screen
 	/*if (!emptyTexture.loadFromFile("Assets/Images/emptyCell.png"))
 	{
 		std::cout << "error with empty cell image file";

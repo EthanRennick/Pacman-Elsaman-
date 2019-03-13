@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp" 
 #include "Globals.h"
+
 class Pacman
 {
 	// private data members
@@ -17,7 +18,12 @@ class Pacman
 
 
 public:
-	void move(); // moves the player via keyboard input– changes its row or column, boundary checking can be done within the move function
+	Pacman();
+	void Pacman::move(Game levelData[MAX_ROWS][MAX_COLS]); // moves the player via keyboard input– changes its row or column, boundary checking can be done within the move function
+	void loadImages();
+	sf::Vector2f getPosition();
+	void setPosition();
+	sf::Sprite getBody();
 
 	//eat(); // the player eats a pellet and his score increases
 	//die(); // if lives 0 game over & call respawn function else take away 1 life

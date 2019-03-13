@@ -112,6 +112,7 @@ void Game::update()
 {
 
 	// update any game variables here ...
+	pacman.move(levelData[MAX_ROWS][MAX_COLS]);
 	drawMaze();
 }
 
@@ -125,6 +126,7 @@ void Game::draw()
 	m_message.setString("Project 2 : Game Play");
 	window.draw(m_message);  // write message to the screen
 	drawMaze();
+	window.draw(pacman.getBody());
 	window.display();
 }
 
