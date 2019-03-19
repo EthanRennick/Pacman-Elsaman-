@@ -7,23 +7,51 @@
 
 Pacman::Pacman()
 {
+	row = 224;
+	col = 480;
 	loadImages();
 	setPosition();
+	treasure = 0;
+	lives = 3;
+	score = 0;
+	alive = true;
+	direction = 1;
 
+}
+
+void Pacman::draw(sf::RenderWindow &t_window)
+{
+	t_window.draw(sprite);
+	row = sprite.getPosition().y / 32;
+	col = sprite.getPosition().x / 32;
+}
+
+void Pacman::collectGold(int t_maze[][MAX_COLS])
+{
+	
+}
+
+int Pacman::getGold()
+{
+	return treasure;
 }
 
 void Pacman::loadImages()
 {
-	if (!texture.loadFromFile("Assets/Images/4294f27f5748384.png"))
+	if (!textureLeft.loadFromFile("Assets/Images/ElsaLeft.png"))
 	{
-		std::cout << "error with player pacman file";
+		std::cout << "error with player pacman file left";
 	}
-	sprite.setTexture(texture);
+	if (!textureRight.loadFromFile("Assets/Images/elsaRight.png"))
+	{
+		std::cout << "error with player pacman file right";
+	}
+	sprite.setTexture(textureLeft);
 }
 
 void Pacman::setPosition()
 {
-	sprite.setPosition(64, 64);
+	sprite.setPosition(row, col);
 }
 
 sf::Sprite Pacman::getBody()
@@ -31,21 +59,54 @@ sf::Sprite Pacman::getBody()
 	return sprite;
 }
 
-void Pacman::move(Game levelData[MAX_ROWS][MAX_COLS])
+void Pacman::move(int t_maze[][MAX_COLS])
 {
+//	sprite.setPosition(row,col);
+	if (t_maze[row][col] == 2)
+	{
+		std::cout << "fun times with violations";
+		t_maze[row][col] = 0;
+		treasure++;
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		sprite.move(32, 0);
-		//if(sprite.getPosition().x )
-
-	}
-	for (int row = 0; row < MAX_ROWS; row++)
-	{
-		for (int col = 0; col < MAX_COLS; col++)
+		if (t_maze[row][col + 1] != 1)
 		{
-			if(levelData[row][col].)
+			sprite.setTexture(textureRight);
+
+			sprite.move(32, 0);
 		}
+	
 	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		if (t_maze[row + 1][col] != 1)
+		{
+			sprite.move(0, 32);
+		}
+	
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		if (t_maze[row][col - 1] != 1)
+		{			
+			sprite.setTexture(textureLeft);
+			sprite.move(-32,0);
+		}
+	
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		if (t_maze[row - 1][col] != 1)
+		{
+			sprite.move(0, -32);
+		}
+	
+	}
+
 }
 
 sf::Vector2f Pacman::getPosition()

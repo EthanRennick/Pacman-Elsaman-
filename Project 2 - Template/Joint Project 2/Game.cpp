@@ -43,7 +43,7 @@ int main()
 	return 0;
 }
 
-Game::Game() : window(sf::VideoMode(896, 992), "Project 2")
+Game::Game() : window(sf::VideoMode(832, 928), "Project 2 - Elsaman")
 // Default constructor
 {
 }
@@ -110,10 +110,17 @@ void Game::run()
 void Game::update()
 // This function takes the keyboard input and updates the game world
 {
-
+	counter--;
 	// update any game variables here ...
-	pacman.move(levelData[MAX_ROWS][MAX_COLS]);
+	if (counter == 0)
+	{
+		pacman.move(levelData);
+		counter = 10;
+	}
+
 	drawMaze();
+	pacman.collectGold(levelData);
+
 }
 
 
@@ -123,10 +130,11 @@ void Game::draw()
 	// Clear the screen and draw your game sprites
 	window.clear();
 
-	m_message.setString("Project 2 : Game Play");
-	window.draw(m_message);  // write message to the screen
+	
 	drawMaze();
-	window.draw(pacman.getBody());
+	pacman.draw(window);
+	m_message.setString("Treasure Collected: " + std::to_string(pacman.getGold()));
+	window.draw(m_message);  // write message to the screen
 	window.display();
 }
 
@@ -142,11 +150,6 @@ void Game::setUpGame()
 void Game::setUpMaze()
 // Setup the sprites for the 2D maze game
 {
-
-	
-
-
-
 	for (int row = 0; row < MAX_ROWS; row++)
 	{
 		for (int col = 0; col < MAX_COLS; col++)
@@ -165,10 +168,9 @@ void Game::setUpMaze()
 				maze[row][col].setCellTexturePellet();
 			}
 			maze[row][col].setPosition(sf::Vector2f{ (float)col * 32, (float)row * 32 });
-		//	xPos += 32;
+	
 		}
-		//xPos = 0;
-		//yPos += 32;
+		
 	}
 }
 
