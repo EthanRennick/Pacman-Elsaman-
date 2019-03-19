@@ -1,2 +1,2 @@
-# 18tangram-EthanRennick
-18tangram-EthanRennick created by GitHub Classroom
+# Elsaman-EthanRennick
+Elsaman, the pacman - EthanRennick created by GitHub Classroom
