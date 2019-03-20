@@ -111,6 +111,10 @@ void Game::update()
 // This function takes the keyboard input and updates the game world
 {
 	counter--;
+	for (int i = 0; i < MAX_GHOSTS; i++)
+	{
+		ghostCounter[i]--;
+	}
 	// update any game variables here ...
 	if (counter == 0)
 	{
@@ -120,7 +124,14 @@ void Game::update()
 
 	drawMaze();
 	pacman.collectGold(levelData);
-
+	for (int i = 0; i < MAX_GHOSTS; i++)
+	{
+		if (ghostCounter[i] == 0)
+		{
+			ghost[i].move(levelData);	
+			ghostCounter[i] = 10;
+		}
+	}
 }
 
 
@@ -133,6 +144,10 @@ void Game::draw()
 	
 	drawMaze();
 	pacman.draw(window);
+	for (int i = 0; i < MAX_GHOSTS; i++)
+	{
+		ghost[i].draw(window);
+	}
 	m_message.setString("Treasure Collected: " + std::to_string(pacman.getGold()));
 	window.draw(m_message);  // write message to the screen
 	window.display();
@@ -144,6 +159,7 @@ void Game::setUpGame()
 {
 	//setup shtuff
 
+	
 }
 
 
@@ -186,4 +202,12 @@ void Game::drawMaze()
 			window.draw(maze[row][col].getSprite());
 		}
 	}
+}
+
+void Game::setupGhosts()
+{
+	ghost[0].getBody().setPosition(160, 32);
+	ghost[1].getBody().setPosition(256, 512);
+	ghost[2].getBody().setPosition(640, 32);
+	ghost[3].getBody().setPosition(640, 640);
 }

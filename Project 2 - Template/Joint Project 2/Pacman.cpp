@@ -3,19 +3,18 @@
 #include "Pacman.h"
 #include "Globals.h"
 #include <iostream>
-#include "Game.h"
 
 Pacman::Pacman()
 {
-	row = 224;
-	col = 480;
+	row = 0;
+	col = 0;
 	loadImages();
 	setPosition();
 	treasure = 0;
 	lives = 3;
 	score = 0;
 	alive = true;
-	direction = 1;
+	//direction = 1;
 
 }
 
@@ -28,7 +27,11 @@ void Pacman::draw(sf::RenderWindow &t_window)
 
 void Pacman::collectGold(int t_maze[][MAX_COLS])
 {
-	
+	if (t_maze[row][col] == 2)
+	{
+		t_maze[row][col] = 0;
+		treasure++;
+	}
 }
 
 int Pacman::getGold()
@@ -51,7 +54,7 @@ void Pacman::loadImages()
 
 void Pacman::setPosition()
 {
-	sprite.setPosition(row, col);
+	sprite.setPosition(32,32);
 }
 
 sf::Sprite Pacman::getBody()
@@ -62,12 +65,7 @@ sf::Sprite Pacman::getBody()
 void Pacman::move(int t_maze[][MAX_COLS])
 {
 //	sprite.setPosition(row,col);
-	if (t_maze[row][col] == 2)
-	{
-		std::cout << "fun times with violations";
-		t_maze[row][col] = 0;
-		treasure++;
-	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		if (t_maze[row][col + 1] != 1)

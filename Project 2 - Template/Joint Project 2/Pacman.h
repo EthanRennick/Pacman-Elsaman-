@@ -15,7 +15,6 @@ class Pacman
 	int col;		  //stores the column the elsa is in within 2D array
 	int score;		  //players score
 	int lives;		  //contains players lives
-	int direction;	  //the direction the player is facing in
 	bool alive;		  //is the player alive
 	int treasure;
 
