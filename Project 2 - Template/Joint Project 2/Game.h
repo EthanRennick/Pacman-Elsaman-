@@ -10,6 +10,7 @@
 #include "Pacman.h"   // include Pacman header file
 #include "Ghost.h"   // include Ghost header file
 #include "Globals.h"
+#include "Particles.h"
 
 class Game
 {

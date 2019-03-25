@@ -127,6 +127,7 @@
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="Particles.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp" 
 #include "Globals.h"
 #include "Cell.h"
+#include"Particles.h"
 
 class Pacman
 {
@@ -18,10 +19,12 @@ class Pacman
 	bool alive;		  //is the player alive
 	int treasure;
 	int invincible;
-
+	
 
 public:
 	Pacman();
+	ParticleSystemGold playerParticlesGold;
+	ParticleSystemBlood playerParticlesBlood;
 	void move(Cell t_maze[][MAX_COLS]); // moves the player via keyboard input– changes its row or column, boundary checking can be done within the move function
 	void loadImages();
 	sf::Vector2f getPosition();

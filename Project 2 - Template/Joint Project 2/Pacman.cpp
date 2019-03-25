@@ -31,6 +31,7 @@ void Pacman::collectGold(Cell t_maze[][MAX_COLS])
 {
 	if (t_maze[row][col].typeOfCellData == 2)
 	{
+		playerParticlesGold.Initialise(sf::Vector2f(sprite.getPosition()));
 		t_maze[row][col].typeOfCellData = 0;
 		t_maze[row][col].setCellTextureEmpty();
 		treasure++;
@@ -57,6 +58,7 @@ void Pacman::collisionWithGhosts(int t_ghostRow, int t_ghostCol)
 	{
 		if (t_ghostRow == row && t_ghostCol == col)
 		{
+			playerParticlesBlood.Initialise(sf::Vector2f(sprite.getPosition()));
 			invincible = 50; //invulnerable timer
 			lives--;
 		}
