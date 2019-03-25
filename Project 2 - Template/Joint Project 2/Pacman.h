@@ -17,18 +17,21 @@ class Pacman
 	int lives;		  //contains players lives
 	bool alive;		  //is the player alive
 	int treasure;
+	int invincible;
 
 
 public:
 	Pacman();
-	void move(int t_maze[][MAX_COLS]); // moves the player via keyboard input– changes its row or column, boundary checking can be done within the move function
+	void move(Cell t_maze[][MAX_COLS]); // moves the player via keyboard input– changes its row or column, boundary checking can be done within the move function
 	void loadImages();
 	sf::Vector2f getPosition();
 	void setPosition();
 	sf::Sprite getBody();
 	void draw(sf::RenderWindow &t_window);
-	void collectGold(int t_maze[][MAX_COLS]);
+	void collectGold(Cell t_maze[][MAX_COLS]);
 	int getGold();
+	int getLives();
+	void collisionWithGhosts(int t_ghostRow, int t_ghostCol);
 	
 	//eat(); // the player eats a pellet and his score increases
 	//die(); // if lives 0 game over & call respawn function else take away 1 life

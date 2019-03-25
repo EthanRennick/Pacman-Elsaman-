@@ -33,7 +33,7 @@
 
 #include "Game.h"   // include Game header file
 
-
+//main
 int main()
 {
 	Game aGame;
@@ -46,6 +46,7 @@ int main()
 Game::Game() : window(sf::VideoMode(832, 928), "Project 2 - Elsaman")
 // Default constructor
 {
+
 }
 
 
@@ -62,6 +63,7 @@ void Game::LoadContent()
 	m_message.setCharacterSize(24); // set the text size
 	m_message.setFillColor(sf::Color::White); // set the text colour
 	m_message.setPosition(10, 10);  // its position on the screen
+
 }
 
 
@@ -71,10 +73,10 @@ void Game::run()
 	sf::Time timePerFrame = sf::seconds(1.0f / 60.0f);
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
+	setUpGame(); //setup initialise stuff
+
 	// the clock object keeps the time.
 	sf::Clock clock;
-
-
 	clock.restart();
 
 	while (window.isOpen())
@@ -94,10 +96,8 @@ void Game::run()
 		//only when the time since last update is greater than 1/60 update the world.
 		if (timeSinceLastUpdate > timePerFrame)
 		{
-
 			update();
 			draw();
-
 			// reset the timeSinceLastUpdate to 0 
 			timeSinceLastUpdate = sf::Time::Zero;
 		}
@@ -115,21 +115,23 @@ void Game::update()
 	{
 		ghostCounter[i]--;
 	}
+
 	// update any game variables here ...
 	if (counter == 0)
 	{
-		pacman.move(levelData);
-		counter = 10;
+		pacman.move(maze); //pacman movement
+		pacman.collectGold(maze); //pacman gold collecting (pellets)
+
+		counter = 10; //reset pacman timer
 	}
 
-	drawMaze();
-	pacman.collectGold(levelData);
 	for (int i = 0; i < MAX_GHOSTS; i++)
 	{
-		if (ghostCounter[i] == 0)
-		{
-			ghost[i].move(levelData);	
-			ghostCounter[i] = 10;
+		if (ghostCounter[i] == 0) //if timer is empty
+		{	
+			ghost[i].move(maze); //ghost moving
+			pacman.collisionWithGhosts(ghost[i].getRow(), ghost[i].getCol()); //has pacman collided with ghost?
+			ghostCounter[i] = 10; //reset timer
 		}
 	}
 }
@@ -148,7 +150,12 @@ void Game::draw()
 	{
 		ghost[i].draw(window);
 	}
+	m_message.setPosition(2, 2);
 	m_message.setString("Treasure Collected: " + std::to_string(pacman.getGold()));
+	window.draw(m_message);  // write message to the screen
+
+	m_message.setPosition(2, 30);
+	m_message.setString("Lives: " + std::to_string(pacman.getLives()));
 	window.draw(m_message);  // write message to the screen
 	window.display();
 }
@@ -157,20 +164,54 @@ void Game::draw()
 void Game::setUpGame()
 // Initialize the game objects to play a new game
 {
-	//setup shtuff
-
-	
+	setUpMaze(); //initialise data like walls and pellets
+	setupGhosts(); //move ghosts to new positions
 }
 
 
 void Game::setUpMaze()
 // Setup the sprites for the 2D maze game
 {
+	//level data (local)
+	int levelData[MAX_ROWS][MAX_COLS] = {
+	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,1, },
+	{ 1,0,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,1,1,1,0,1,0,0,1,1,0,1,1,0,1,1,0,0,1,0,1,1,1,0,1, },
+	{ 1,0,0,0,0,0,1,0,0,0,1,0,1,1,0,1,0,0,0,1,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,0,1, },
+	{ 1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,1, },
+	{ 1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, },
+	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1  },
+	};
+
+	//set the textures
 	for (int row = 0; row < MAX_ROWS; row++)
 	{
 		for (int col = 0; col < MAX_COLS; col++)
 		{
-			//maze[row][col].loadTextures();
+			maze[row][col].typeOfCellData = levelData[row][col];
+
 			if(levelData[row][col]==0)
 			{
 				maze[row][col].setCellTextureEmpty();
@@ -184,9 +225,7 @@ void Game::setUpMaze()
 				maze[row][col].setCellTexturePellet();
 			}
 			maze[row][col].setPosition(sf::Vector2f{ (float)col * 32, (float)row * 32 });
-	
-		}
-		
+		}	
 	}
 }
 
@@ -194,7 +233,6 @@ void Game::setUpMaze()
 void Game::drawMaze()
 // Draw the 2D maze
 {
-	setUpMaze();
 	for (int row = 0; row < MAX_ROWS; row++)
 	{
 		for (int col = 0; col < MAX_COLS; col++)
@@ -204,10 +242,11 @@ void Game::drawMaze()
 	}
 }
 
+//move ghosts to other positions
 void Game::setupGhosts()
 {
-	ghost[0].getBody().setPosition(160, 32);
-	ghost[1].getBody().setPosition(256, 512);
-	ghost[2].getBody().setPosition(640, 32);
-	ghost[3].getBody().setPosition(640, 640);
+	ghost[0].setGhostPos(160, 32);
+	ghost[1].setGhostPos(256, 512);
+	ghost[2].setGhostPos(640, 32);
+	ghost[3].setGhostPos(640, 640);
 }

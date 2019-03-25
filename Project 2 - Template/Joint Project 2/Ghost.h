@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp" 
 #include "Globals.h"
+#include "Cell.h"
 class Ghost
 {
 	// private data members
@@ -23,6 +24,9 @@ public:
 	void setPosition();
 	sf::Sprite getBody();
 	void draw(sf::RenderWindow &t_window);
-	void move(int t_maze[][MAX_COLS]); // moves the ghost -> changes its row or column, boundary checking can be done within the move function
+	void move(Cell t_maze[][MAX_COLS]); // moves the ghost -> changes its row or column, boundary checking can be done within the move function
+	int getRow();
+	int getCol();
+	void setGhostPos(int pos1, int pos2);
 
 };

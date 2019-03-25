@@ -14,10 +14,11 @@ Pacman::Pacman()
 	lives = 3;
 	score = 0;
 	alive = true;
-	//direction = 1;
+	invincible = 50; //invulnerability timer
 
 }
 
+//draw pacman
 void Pacman::draw(sf::RenderWindow &t_window)
 {
 	t_window.draw(sprite);
@@ -25,20 +26,44 @@ void Pacman::draw(sf::RenderWindow &t_window)
 	col = sprite.getPosition().x / 32;
 }
 
-void Pacman::collectGold(int t_maze[][MAX_COLS])
+//collecting treasure function
+void Pacman::collectGold(Cell t_maze[][MAX_COLS])
 {
-	if (t_maze[row][col] == 2)
+	if (t_maze[row][col].typeOfCellData == 2)
 	{
-		t_maze[row][col] = 0;
+		t_maze[row][col].typeOfCellData = 0;
+		t_maze[row][col].setCellTextureEmpty();
 		treasure++;
 	}
 }
 
+//get player score
 int Pacman::getGold()
 {
 	return treasure;
 }
 
+//return lives of elsaman
+int Pacman::getLives()
+{
+	return lives;
+}
+
+//pacman - ghost collision function
+void Pacman::collisionWithGhosts(int t_ghostRow, int t_ghostCol)
+{
+	invincible--;
+	if (invincible <= 0)
+	{
+		if (t_ghostRow == row && t_ghostCol == col)
+		{
+			invincible = 50; //invulnerable timer
+			lives--;
+		}
+	}
+}
+
+//load sprites etc
 void Pacman::loadImages()
 {
 	if (!textureLeft.loadFromFile("Assets/Images/ElsaLeft.png"))
@@ -52,23 +77,25 @@ void Pacman::loadImages()
 	sprite.setTexture(textureLeft);
 }
 
+//set up pacman's position
 void Pacman::setPosition()
 {
 	sprite.setPosition(32,32);
 }
 
+//return his body (sprite)
 sf::Sprite Pacman::getBody()
 {
 	return sprite;
 }
 
-void Pacman::move(int t_maze[][MAX_COLS])
+//elsaman movement
+void Pacman::move(Cell t_maze[][MAX_COLS])
 {
-//	sprite.setPosition(row,col);
-
+	//right hand movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		if (t_maze[row][col + 1] != 1)
+		if (t_maze[row][col + 1].typeOfCellData != 1)
 		{
 			sprite.setTexture(textureRight);
 
@@ -76,37 +103,35 @@ void Pacman::move(int t_maze[][MAX_COLS])
 		}
 	
 	}
-
+	/// downward movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		if (t_maze[row + 1][col] != 1)
+		if (t_maze[row + 1][col].typeOfCellData != 1)
 		{
 			sprite.move(0, 32);
 		}
 	
 	}
-
+	//left hand movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		if (t_maze[row][col - 1] != 1)
+		if (t_maze[row][col - 1].typeOfCellData != 1)
 		{			
 			sprite.setTexture(textureLeft);
 			sprite.move(-32,0);
 		}
-	
 	}
-
+	//upward movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		if (t_maze[row - 1][col] != 1)
+		if (t_maze[row - 1][col].typeOfCellData != 1)
 		{
 			sprite.move(0, -32);
 		}
-	
 	}
-
 }
 
+//return elsaman position
 sf::Vector2f Pacman::getPosition()
 {
 	return sprite.getPosition();
