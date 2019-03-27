@@ -64,7 +64,32 @@ void Game::LoadContent()
 	m_message.setFillColor(sf::Color::White); // set the text colour
 	m_message.setPosition(10, 10);  // its position on the screen
 
+	// main menu
+	if (!menuTexture.loadFromFile("Assets/Images/menu.png"))
+	{
+		std::cout << "error with menu file ";
+	}
+	menuSprite.setTexture(menuTexture);
+	menuSprite.setScale(0.52, 0.65);
+	menuSprite.setPosition(0, 0);
+
+	//help screen
+	if (!helpTexture.loadFromFile("Assets/Images/olaf.png"))
+	{
+		std::cout << "error with help screen";
+	}
+	helpSprite.setTexture(helpTexture);
+	helpSprite.setPosition(650, 600);
+
+	//game over screen
+	if (!gameOverTexture.loadFromFile("Assets/Images/hans.png"))
+	{
+		std::cout << "error with game over screen";
+	}
+	gameOverSprite.setTexture(gameOverTexture);
+
 }
+
 
 
 void Game::run()
@@ -106,34 +131,88 @@ void Game::run()
 }
 
 
-
+//update every 1/60th of a second
 void Game::update()
 // This function takes the keyboard input and updates the game world
 {
-	counter--;
-	for (int i = 0; i < MAX_GHOSTS; i++)
+	if (acceptName == true)
 	{
-		ghostCounter[i]--;
+		while (acceptName == true)
+		{
+			sf::Event event;
+
+			while (window.pollEvent(event))
+			{
+				if (event.type == sf::Event::Closed)
+					window.close();
+
+				if (event.type == sf::Event::TextEntered)
+				{
+					bool backSpace_down =
+						sf::Keyboard::isKeyPressed(sf::Keyboard::Key::BackSpace);
+
+					if (backSpace_down == true && playerName.length() != 0)
+					{
+						playerName.pop_back();
+					}
+					else if (event.text.unicode < 128)
+					{
+						playerName.push_back((char)event.text.unicode);
+					}
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+				{
+					acceptName = false;
+					gamePlay = true;
+				}
+			}
+			
+		}
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && menu == true)
+	{
+		menu = false;
+		acceptName = true;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && menu == true)
+	{
+			menu = false;
+			help = true;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && help == true)
+	{
+		menu = true;
+		help = false;
 	}
 
-	// update any game variables here ...
-	if (counter == 0)
+	if (gamePlay == true)
 	{
-		pacman.move(maze); //pacman movement
-		pacman.collectGold(maze); //pacman gold collecting (pellets)
+		counter--;
+		for (int i = 0; i < MAX_GHOSTS; i++)
+		{
+			ghostCounter[i]--;
+		}
+
+		// update any game variables here ...
+		if (counter == 0)
+		{
+			pacman.move(maze); //pacman movement
+			pacman.collectGold(maze); //pacman gold collecting (pellets)
+			counter = 10; //reset pacman timer
+		}
+
+		//particles
 		pacman.playerParticlesGold.Update();
 		pacman.playerParticlesBlood.Update();
 
-		counter = 10; //reset pacman timer
-	}
-
-	for (int i = 0; i < MAX_GHOSTS; i++)
-	{
-		if (ghostCounter[i] == 0) //if timer is empty
-		{	
-			ghost[i].move(maze); //ghost moving
-			pacman.collisionWithGhosts(ghost[i].getRow(), ghost[i].getCol()); //has pacman collided with ghost?
-			ghostCounter[i] = 10; //reset timer
+		for (int i = 0; i < MAX_GHOSTS; i++)
+		{
+			if (ghostCounter[i] == 0) //if timer is empty
+			{
+				ghost[i].move(maze); //ghost moving
+				pacman.collisionWithGhosts(ghost[i].getRow(), ghost[i].getCol(), gameOver,gamePlay); //has pacman collided with ghost?
+				ghostCounter[i] = 10; //reset timer
+			}
 		}
 	}
 }
@@ -145,22 +224,59 @@ void Game::draw()
 	// Clear the screen and draw your game sprites
 	window.clear();
 
-	
-	drawMaze();
-	pacman.draw(window);
-	pacman.playerParticlesGold.Draw(window);
-	pacman.playerParticlesBlood.Draw(window);
-	for (int i = 0; i < MAX_GHOSTS; i++)
+	if (menu == true)
 	{
-		ghost[i].draw(window);
+		window.draw(menuSprite);
+		m_message.setPosition(375,550);
+		m_message.setString("Main Menu");
+		window.draw(m_message);  // write message to the screen
+		m_message.setPosition(362, 590);
+		m_message.setString("Play Game [1]");
+		window.draw(m_message);  // write message to the screen
+		m_message.setPosition(360, 630);
+		m_message.setString("Help Screen [2]");
+		window.draw(m_message);  // write message to the screen
 	}
-	m_message.setPosition(2, 2);
-	m_message.setString("Treasure Collected: " + std::to_string(pacman.getGold()));
-	window.draw(m_message);  // write message to the screen
+	if (help == true)
+	{
+		window.draw(helpSprite);
+		m_message.setPosition(200, 300);
+		m_message.setString("         Use the arrow keys to move\n\n      Dodge the ghosts or lose a life\n\n Pick up treasure for a better score \n\nRescue as many friends as possible\n                   for a better score\n\nPress lShift to return to main menu");
+		window.draw(m_message);  // write message to the screen
+	}
+	if (acceptName == true)
+	{
+		std::string playerNameDisplay ;
+		playerNameDisplay = "Enter your kingdom name: " + playerName;
+		m_message.setPosition(200, 300);
+		m_message.setString(playerNameDisplay);
+		window.draw(m_message);  // write message to the screen
+	}
+	if(gamePlay==true)
+	{
+		drawMaze();
+		pacman.draw(window);
+		pacman.playerParticlesGold.Draw(window);
+		pacman.playerParticlesBlood.Draw(window);
+		for (int i = 0; i < MAX_GHOSTS; i++)
+		{
+			ghost[i].draw(window);
+		}
+		m_message.setPosition(2, 2);
+		m_message.setString("Treasure Collected: " + std::to_string(pacman.getGold()));
+		window.draw(m_message);  // write message to the screen
 
-	m_message.setPosition(2, 30);
-	m_message.setString("Lives: " + std::to_string(pacman.getLives()));
-	window.draw(m_message);  // write message to the screen
+		m_message.setPosition(2, 30);
+		m_message.setString("Lives: " + std::to_string(pacman.getLives()));
+		window.draw(m_message);  // write message to the screen
+	}
+	if (gameOver == true)
+	{
+		window.draw(gameOverSprite);
+		m_message.setPosition(300, 550);
+		m_message.setString("You have lost");
+		window.draw(m_message);  // write message to the screen
+	}
 	window.display();
 }
 

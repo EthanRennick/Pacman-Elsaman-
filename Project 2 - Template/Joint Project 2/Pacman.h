@@ -34,7 +34,7 @@ public:
 	void collectGold(Cell t_maze[][MAX_COLS]);
 	int getGold();
 	int getLives();
-	void collisionWithGhosts(int t_ghostRow, int t_ghostCol);
+	void collisionWithGhosts(int t_ghostRow, int t_ghostCol,bool &t_gameOver,bool &t_gamePlay);
 	
 	//eat(); // the player eats a pellet and his score increases
 	//die(); // if lives 0 game over & call respawn function else take away 1 life

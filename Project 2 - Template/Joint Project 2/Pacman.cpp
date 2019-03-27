@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include <iostream>
 
+
 Pacman::Pacman()
 {
 	row = 0;
@@ -51,7 +52,7 @@ int Pacman::getLives()
 }
 
 //pacman - ghost collision function
-void Pacman::collisionWithGhosts(int t_ghostRow, int t_ghostCol)
+void Pacman::collisionWithGhosts(int t_ghostRow, int t_ghostCol, bool &t_gameOver, bool &t_gamePlay)
 {
 	invincible--;
 	if (invincible <= 0)
@@ -61,6 +62,11 @@ void Pacman::collisionWithGhosts(int t_ghostRow, int t_ghostCol)
 			playerParticlesBlood.Initialise(sf::Vector2f(sprite.getPosition()));
 			invincible = 50; //invulnerable timer
 			lives--;
+			if (lives < 0)
+			{
+				t_gameOver = true;
+				t_gamePlay = false;
+			}
 		}
 	}
 }

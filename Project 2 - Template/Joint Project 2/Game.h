@@ -11,7 +11,7 @@
 #include "Ghost.h"   // include Ghost header file
 #include "Globals.h"
 #include "Particles.h"
-
+#include <string>
 class Game
 {
 	// private data members
@@ -32,8 +32,9 @@ class Game
 	sf::Texture gameOverTexture;
 	sf::Sprite gameOverSprite;
 
-	sf::String playerName;
+	std::string playerName;
 	
+
 
 
 public:
@@ -41,10 +42,11 @@ public:
 	sf::Text m_message;  // text to write on the screen
 	int counter = 10;
 	int ghostCounter[MAX_GHOSTS] = { 10,10,10,10 };
-	bool menu = false;
+	bool menu = true;
 	bool help = false;
+	bool gameOver = false; //has game ended?
 	bool gamePlay = false;
-	bool gameOver = false;
+	bool acceptName = false;
 
 public:	  // declaration of member functions	
 	Game();  // default constructor

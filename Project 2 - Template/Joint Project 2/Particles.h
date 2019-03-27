@@ -2,6 +2,8 @@
 #include "SFML/Graphics.hpp" 
 #include "Globals.h"
 
+//These are the particles used in my game
+
 class Particle
 {
 public:
@@ -10,12 +12,13 @@ public:
 	int framesToLive;
 };
 
+//blood particles
 class ParticleSystemBlood
 {
 public:
 	static const int numParticles = 10;
 	Particle particles[16];
-	float maxSpeed = 13;
+	float maxSpeed = 2;
 	sf::Vector2f center;
 
 	ParticleSystemBlood()
@@ -67,12 +70,13 @@ public:
 	}
 };
 
+//treasure collecting particles
 class ParticleSystemGold
 {
 public:
 	static const int numParticles = 8;
 	Particle particles[numParticles];
-	float maxSpeed = 10;
+	float maxSpeed = 4;
 	sf::Vector2f center;
 
 	ParticleSystemGold()
