@@ -3,6 +3,9 @@
 #include "Globals.h"
 #include "Cell.h"
 #include"Particles.h"
+//sound
+#include <SFML/Audio/SoundBuffer.hpp>
+#include<SFML/Audio/Sound.hpp>
 
 class Pacman
 {
@@ -17,12 +20,15 @@ class Pacman
 	int score;		  //players score
 	int lives;		  //contains players lives
 	bool alive;		  //is the player alive
-	int treasure;
 	int invincible;
-	
+	sf::Vector2f playerLookDirection{ 0,-1, };
+
+	sf::SoundBuffer oofBuffer; //music elsa makes when hurt
+	sf::Sound oofSound;
 
 public:
 	Pacman();
+	int treasure;
 	ParticleSystemGold playerParticlesGold;
 	ParticleSystemBlood playerParticlesBlood;
 	void move(Cell t_maze[][MAX_COLS]); // moves the player via keyboard input– changes its row or column, boundary checking can be done within the move function
@@ -35,12 +41,9 @@ public:
 	int getGold();
 	int getLives();
 	void collisionWithGhosts(int t_ghostRow, int t_ghostCol,bool &t_gameOver,bool &t_gamePlay);
-	
-	//eat(); // the player eats a pellet and his score increases
-	//die(); // if lives 0 game over & call respawn function else take away 1 life
-	//respawn(); // causes the player to be reset to a starting position
-
-	//collision(); // if the player moves into a cell containing a ghost the player loses a life.
-
+	void changeScore(int t_value);
+	void changeLives(int t_value);
+	int invincibleStatus();
+	sf::Vector2f getPlayerLookDirection();
 
 };

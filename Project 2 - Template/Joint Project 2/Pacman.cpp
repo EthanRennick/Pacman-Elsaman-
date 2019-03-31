@@ -16,7 +16,9 @@ Pacman::Pacman()
 	score = 0;
 	alive = true;
 	invincible = 50; //invulnerability timer
-
+	//load music
+	oofBuffer.loadFromFile("Assets/Audio/oof.wav");
+	oofSound.setBuffer(oofBuffer);
 }
 
 //draw pacman
@@ -62,6 +64,7 @@ void Pacman::collisionWithGhosts(int t_ghostRow, int t_ghostCol, bool &t_gameOve
 			playerParticlesBlood.Initialise(sf::Vector2f(sprite.getPosition()));
 			invincible = 50; //invulnerable timer
 			lives--;
+			oofSound.play();
 			if (lives < 0)
 			{
 				t_gameOver = true;
@@ -69,6 +72,21 @@ void Pacman::collisionWithGhosts(int t_ghostRow, int t_ghostCol, bool &t_gameOve
 			}
 		}
 	}
+}
+
+void Pacman::changeScore(int t_value)
+{
+	score = t_value;
+}
+
+void Pacman::changeLives(int t_value)
+{
+	lives = t_value;
+}
+
+int Pacman::invincibleStatus()
+{
+	return invincible;
 }
 
 //load sprites etc
@@ -143,4 +161,10 @@ void Pacman::move(Cell t_maze[][MAX_COLS])
 sf::Vector2f Pacman::getPosition()
 {
 	return sprite.getPosition();
+}
+
+//what direction is the player looking?
+sf::Vector2f Pacman::getPlayerLookDirection()
+{
+	return playerLookDirection;
 }
