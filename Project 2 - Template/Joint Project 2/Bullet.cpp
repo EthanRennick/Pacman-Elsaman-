@@ -20,7 +20,7 @@ void Bullet::loadImage()
 		std::cout << "error with bullet laser file"; //error
 	}
 	bulletsScreen.setTexture(bulletTexture); //set texture to sprite
-	bulletsScreen.setOrigin(15, 15);
+	//bulletsScreen.setOrigin(15, 15);
 
 }
 
@@ -75,6 +75,10 @@ void Bullet::bulletMovement()
 	//if bullet is in use, move it
 	if (bulletsScreen.getPosition().x != -500)
 	{
+		row = bulletsScreen.getPosition().y / 32;
+		col = bulletsScreen.getPosition().x / 32;
+
+
 		bulletsScreen.move(bulletVelocity);
 		if (bulletsScreen.getPosition().x > SCREEN_WIDTH)
 		{
@@ -106,24 +110,24 @@ void Bullet::bulletMovement()
 	}
 }
 
-//void Bullet::collisionsWithAsteroids(Asteroid t_asteroid[])
-//{
-	//MyVector3 distanceVector; //distance between asteroid and bullet
-	//float length; //length of distance vector
-	//const int BULLET_ORIGIN_TO_ASTEROID_ORIGIN = 35;
+//collisions with ghost enemies
+void Bullet::collisionsWithGhosts(Ghost t_Ghost[], Cell t_cell[][MAX_COLS])
+{
+	for (int j = 0; j < MAX_GHOSTS; j++)
+	{
+		if (bulletsScreen.getGlobalBounds().intersects(t_Ghost[j].getBody().getGlobalBounds()))
+		{
+			t_Ghost[j].respawnGhost();
+		}
+	}
+	
+	if (t_cell[row][col].typeOfCell() == 1)
+	{
+		bulletsScreen.setPosition(storageVector);
+		bulletVelocity = { 0.0, 0.0 };
+		readyToFire = true;
+	}
 
-	//for (int j = 0; j < MAX_ASTEROIDS; j++)
-	//{
-	//	distanceVector = bulletsScreen.getPosition() - t_asteroid[j].getBody().getPosition();
-	//	length = distanceVector.length();
-
-	//	if (length < BULLET_ORIGIN_TO_ASTEROID_ORIGIN)
-	//	{
-	//		std::cout << "asteroid shot by bullet";
-	//	}
-	//}
-
-
-//}
+}
 
 

@@ -14,6 +14,8 @@ class Ghost
 	int row;
 	int col;
 	int randomDirectionNumber;
+	int health;
+	int respawnCount;
 
 
 
@@ -28,5 +30,6 @@ public:
 	int getRow();
 	int getCol();
 	void setGhostPos(int pos1, int pos2);
+	void respawnGhost();
 
 };

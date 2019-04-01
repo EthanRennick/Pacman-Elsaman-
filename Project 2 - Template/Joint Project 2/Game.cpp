@@ -102,13 +102,11 @@ void Game::LoadContent()
 	victorySprite.setTexture(victoryTexture);
 
 	//sound loading
-	menumusicBuffer.loadFromFile("Assets/Audio/menumusic.wav");
-	menumusicSound.setBuffer(menumusicBuffer);
+	//menumusicBuffer.loadFromFile("Assets/Audio/menumusic.wav");
+	//menumusicSound.setBuffer(menumusicBuffer);
 
-	musicBuffer.loadFromFile("Assets/Audio/music.wav");
-	musicSound.setBuffer(musicBuffer);
-
-
+	//musicBuffer.loadFromFile("Assets/Audio/music.wav");
+	//musicSound.setBuffer(musicBuffer);
 
 	throwBuffer.loadFromFile("Assets/Audio/throw.wav");
 	throwSound.setBuffer(throwBuffer);
@@ -136,7 +134,31 @@ void Game::run()
 			{
 				if (event.key.code == sf::Keyboard::Space)
 				{
+					throwSound.play();
 					bulletFiring(); //fire a bullet
+				}
+			}
+			if (acceptName == true)
+			{
+				if (event.type == sf::Event::TextEntered)
+				{
+					bool backSpace_down =
+						sf::Keyboard::isKeyPressed(sf::Keyboard::Key::BackSpace);
+					if (backSpace_down == true && playerName.length() != 0)
+					{
+						playerName.pop_back();
+					}
+					else if (event.text.unicode < 128)
+					{
+						playerName.push_back((char)event.text.unicode);
+					}
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+				{
+					acceptName = false;
+					gamePlay = true;
+					//menumusicSound.stop();
+					//musicSound.play();
 				}
 			}
 		}
@@ -159,12 +181,13 @@ void Game::run()
 void Game::update()
 // This function takes the keyboard input and updates the game world
 {
-	updateName(); //deals with string input for name
+	
 	updateMenuAndInput(); //handles the key input on different screens
 	updateGamePlay(); //this is the main gameplay loop that needs to run
 	for (int i = 0; i < MAX_BULLETS; i++)
 	{
 		bullets[i].bulletMovement();	//move bullets
+		bullets[i].collisionsWithGhosts(ghost,maze);
 	}
 }
 
@@ -290,6 +313,7 @@ void Game::totalGameReset()
 	gamePlay = false;
 	gameOver = false;
 	winGame = false;
+	playerName = "";
 }
 
 //update the core game loop
@@ -341,47 +365,13 @@ void Game::updateGamePlay()
 	}
 }
 
-//this function is the string input function for getting player's name
-void Game::updateName()
-{
-	while (acceptName == true)
-	{
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-			if (event.type == sf::Event::TextEntered)
-			{
-				bool backSpace_down =
-					sf::Keyboard::isKeyPressed(sf::Keyboard::Key::BackSpace);
-				if (backSpace_down == true && playerName.length() != 0)
-				{
-					playerName.pop_back();
-				}
-				else if (event.text.unicode < 128)
-				{
-					playerName.push_back((char)event.text.unicode);
-				}
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-			{
-				acceptName = false;
-				gamePlay = true;
-				menumusicSound.stop();
-				musicSound.play();
-			}
-		}
-	}
-}
-
 //this function looks at the screens and will accept input for each one
 void Game::updateMenuAndInput()
 {
 	if (menumusic == false)
 	{
-		menumusicSound.play();
-		menumusic = true;
+		//menumusicSound.play();
+	//	menumusic = true;
 	}
 	//menu screen -> playing game
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && menu == true)
@@ -511,12 +501,11 @@ void Game::bulletFiring()
 				bullets[i].bulletsScreen.setPosition(pacman.getBody().getPosition()); // bullet should go to the sprite
 
 				bullets[i].bulletVelocity = (pacman.getPlayerLookDirection()); //the velocity is enlarged
-				bullets[i].bulletVelocity.x = bullets[i].bulletVelocity.x * 8;
-				bullets[i].bulletVelocity.y = bullets[i].bulletVelocity.y * 8;
+				bullets[i].bulletVelocity.x = bullets[i].bulletVelocity.x * 6;
+				bullets[i].bulletVelocity.y = bullets[i].bulletVelocity.y * 6;
 				bullets[i].readyToFire = false; //the bullet is not ready to fire again until the counter is at 0 
-				bullets[i].waitToFireCounter = 10;
+				bullets[i].waitToFireCounter = 40;
 
-				
 				break; //also get out of the loop
 			}
 		}

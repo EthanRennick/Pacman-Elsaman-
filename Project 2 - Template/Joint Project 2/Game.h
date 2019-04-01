@@ -44,11 +44,11 @@ class Game
 
 public:
 	//sounds
-	sf::SoundBuffer musicBuffer; //game music
-	sf::Sound musicSound;
+	//sf::SoundBuffer musicBuffer; //game music
+	//sf::Sound musicSound;
 
-	sf::SoundBuffer menumusicBuffer; //menu music
-	sf::Sound menumusicSound;
+	//sf::SoundBuffer menumusicBuffer; //menu music
+	//sf::Sound menumusicSound;
 
 
 
@@ -83,7 +83,6 @@ public:	  // declaration of member functions
 	void	setupGhosts();
 	void	totalGameReset();
 	void updateGamePlay();
-	void updateName();
 	void updateMenuAndInput();
 	void drawTheCorrectScreen();
 	void bulletFiring();

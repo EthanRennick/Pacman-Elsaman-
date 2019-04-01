@@ -11,6 +11,8 @@ Ghost::Ghost()
 	loadImages();
 	//setPosition();
 	randomDirectionNumber = 1;
+	health = 4;
+	int respawnCount = 40;
 
 }
 
@@ -117,4 +119,29 @@ int Ghost::getCol()
 void Ghost::setGhostPos(int pos1, int pos2)
 {
 	ghostSprite.setPosition(pos1, pos2);
+}
+
+//respawn ghost when shot
+void Ghost::respawnGhost()
+{
+	int randomNumber = rand() %4+1;
+	switch (randomNumber)
+	{
+		case 1:
+			setGhostPos(160, 32);
+
+			break;
+
+		case 2:
+			setGhostPos(256, 512);
+			break;
+
+		case 3:
+			setGhostPos(640, 32);
+			break;
+
+		case 4:
+			setGhostPos(640, 640);
+			break;
+	}
 }

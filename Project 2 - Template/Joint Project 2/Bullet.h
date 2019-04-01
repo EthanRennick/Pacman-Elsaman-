@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Pacman.h"
 #include "Ghost.h"
+#include "Cell.h"
 
 class Bullet
 {
@@ -14,6 +15,8 @@ public:
 	sf::Vector2f bulletVelocity;
 	int waitToFireCounter;
 	bool readyToFire;
+	int row;
+	int col;
 
 public:
 	Bullet(); //default constructor
@@ -30,6 +33,6 @@ public:
 	void setPos(sf::Vector2f t_position);
 	void bulletMovement(); //move bullet if fired
 
-	//void collisionsWithAsteroids(Asteroid t_asteroid[]);
+	void collisionsWithGhosts(Ghost t_ghost[], Cell t_cell[][MAX_COLS]);
 
 };

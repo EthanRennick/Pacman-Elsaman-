@@ -124,7 +124,7 @@ void Pacman::move(Cell t_maze[][MAX_COLS])
 		if (t_maze[row][col + 1].typeOfCellData != 1)
 		{
 			sprite.setTexture(textureRight);
-
+			playerLookDirection = { 1,0 };
 			sprite.move(32, 0);
 		}
 	
@@ -134,6 +134,8 @@ void Pacman::move(Cell t_maze[][MAX_COLS])
 	{
 		if (t_maze[row + 1][col].typeOfCellData != 1)
 		{
+			playerLookDirection = { 0,1 };
+
 			sprite.move(0, 32);
 		}
 	
@@ -144,6 +146,7 @@ void Pacman::move(Cell t_maze[][MAX_COLS])
 		if (t_maze[row][col - 1].typeOfCellData != 1)
 		{			
 			sprite.setTexture(textureLeft);
+			playerLookDirection = { -1,0 };
 			sprite.move(-32,0);
 		}
 	}
@@ -152,6 +155,7 @@ void Pacman::move(Cell t_maze[][MAX_COLS])
 	{
 		if (t_maze[row - 1][col].typeOfCellData != 1)
 		{
+			playerLookDirection = { 0,-1 };
 			sprite.move(0, -32);
 		}
 	}
