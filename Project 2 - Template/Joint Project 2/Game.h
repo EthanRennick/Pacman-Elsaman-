@@ -38,6 +38,8 @@ class Game
 	sf::Sprite gameOverSprite;
 	sf::Texture victoryTexture;
 	sf::Sprite  victorySprite;
+	sf::Texture scoreTexture;
+	sf::Sprite  scoreSprite;
 	//player name string
 	std::string playerName;
 
@@ -70,6 +72,11 @@ public:
 	//music controls
 	bool menumusic = false;
 	bool music = false;
+	bool stopGame =false;
+	bool scoreBoard = false;
+	bool scoreDisplayed = false;
+	sf::String playerNames[10];
+	sf::String playerDisplay;
 
 public:	  // declaration of member functions	
 	Game();  // default constructor

@@ -1,8 +1,9 @@
-﻿  Bullet.cpp
+﻿  Game.cpp
 c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\particles.h(38): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\particles.h(39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\particles.h(96): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\particles.h(97): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\bullet.cpp(78): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\bullet.cpp(79): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\game.cpp(79): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\game.cpp(110): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\c00240102\desktop\pacman-elsaman-\project 2 - template\joint project 2\game.cpp(125): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Joint Project 2.vcxproj -> C:\Users\C00240102\Desktop\Pacman-Elsaman-\Project 2 - Template\Debug\Joint Project 2.exe

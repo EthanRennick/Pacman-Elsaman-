@@ -101,12 +101,20 @@ void Game::LoadContent()
 	}
 	victorySprite.setTexture(victoryTexture);
 
-	//sound loading
-	//menumusicBuffer.loadFromFile("Assets/Audio/menumusic.wav");
-	//menumusicSound.setBuffer(menumusicBuffer);
+	//score board
+	if (!scoreTexture.loadFromFile("Assets/Images/scoreBoard.png"))
+	{
+		std::cout << "error with score board screen";
+	}
+	scoreSprite.setTexture(scoreTexture);
+	scoreSprite.setScale(0.7, 1.5);
 
-	//musicBuffer.loadFromFile("Assets/Audio/music.wav");
-	//musicSound.setBuffer(musicBuffer);
+	//sound loading
+	/*menumusicBuffer.loadFromFile("Assets/Audio/menumusic.ogg");
+	menumusicSound.setBuffer(menumusicBuffer);
+
+	musicBuffer.loadFromFile("Assets/Audio/music.ogg");
+	musicSound.setBuffer(musicBuffer);*/
 
 	throwBuffer.loadFromFile("Assets/Audio/throw.wav");
 	throwSound.setBuffer(throwBuffer);
@@ -137,6 +145,23 @@ void Game::run()
 					throwSound.play();
 					bulletFiring(); //fire a bullet
 				}
+				if (event.key.code == sf::Keyboard::Escape)
+				{
+					if (gamePlay == true)
+					{
+						if (event.key.code == sf::Keyboard::Escape)
+						{
+							if (stopGame == false)
+							{
+								stopGame = true;
+							}
+							else if (stopGame == true)
+							{
+								stopGame = false;
+							}
+						}
+					}
+				}
 			}
 			if (acceptName == true)
 			{
@@ -161,6 +186,9 @@ void Game::run()
 					//musicSound.play();
 				}
 			}
+			
+			
+			
 		}
 		//get the time since last update and restart the clock
 		timeSinceLastUpdate += clock.restart();
@@ -183,11 +211,14 @@ void Game::update()
 {
 	
 	updateMenuAndInput(); //handles the key input on different screens
-	updateGamePlay(); //this is the main gameplay loop that needs to run
-	for (int i = 0; i < MAX_BULLETS; i++)
+	if (stopGame == false)
 	{
-		bullets[i].bulletMovement();	//move bullets
-		bullets[i].collisionsWithGhosts(ghost,maze);
+		updateGamePlay(); //this is the main gameplay loop that needs to run
+		for (int i = 0; i < MAX_BULLETS; i++)
+		{
+			bullets[i].bulletMovement();	//move bullets
+			bullets[i].collisionsWithGhosts(ghost, maze);
+		}
 	}
 }
 
@@ -212,6 +243,12 @@ void Game::draw()
 void Game::setUpGame()
 // Initialize the game objects to play a new game
 {
+	for (int i = 0; i < 10; i++)
+	{
+		playerNames[i] = "";
+	}
+	playerDisplay = "";
+
 	setUpMaze(); //initialise data like walls and pellets
 	setupGhosts(); //move ghosts to new positions
 }
@@ -233,7 +270,7 @@ void Game::setUpMaze()
 	{ 1,2,1,1,1,2,1,1,2,2,1,1,2,2,1,1,2,2,1,1,2,1,1,1,2,1, },
 	{ 1,2,2,2,2,2,1,2,2,2,1,2,2,2,2,1,2,2,2,1,2,2,2,2,2,1, },
 	{ 1,1,1,1,1,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,1,1,1,1,1, },
-	{ 1,2,2,2,2,2,1,1,1,2,1,1,1,1,1,1,2,1,1,1,2,2,2,2,2,1, },
+	{ 1,2,2,2,1,2,1,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1,2,2,2,1, },
 	{ 1,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,1, },
 	{ 1,2,1,1,1,1,2,2,1,1,1,2,1,1,2,1,1,1,2,2,1,1,1,1,2,1, },
 	{ 1,2,1,2,2,2,2,2,2,2,1,2,1,1,2,1,2,2,2,2,2,2,2,1,2,1, },
@@ -303,6 +340,14 @@ void Game::setupGhosts()
 //mostly just used for when user wins or loses
 void Game::totalGameReset()
 {
+	for (int i = 0; i < 10; i++)
+	{
+		if (playerNames[i] == "")
+		{
+			playerNames[i] = playerName;
+			break;
+		}
+	}
 	pacman.getBody().setPosition(32, 32);
 	pacman.changeLives(3);
 	pacman.changeScore(0);
@@ -368,6 +413,7 @@ void Game::updateGamePlay()
 //this function looks at the screens and will accept input for each one
 void Game::updateMenuAndInput()
 {
+
 	if (menumusic == false)
 	{
 		//menumusicSound.play();
@@ -385,11 +431,23 @@ void Game::updateMenuAndInput()
 		menu = false;
 		help = true;
 	}
+	//menu -> score board
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && menu == true)
+	{
+		menu = false;
+		scoreBoard = true;
+	}
 	//help screen -> menu 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && help == true)
 	{
 		menu = true;
 		help = false;
+	}
+	//scoreBoard -> menu
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && scoreBoard == true)
+	{
+		menu = true;
+		scoreBoard = false;
 	}
 	//game over screen -> menu
 	if (gameOver == true) //let user restart if he presses enter
@@ -408,6 +466,8 @@ void Game::updateMenuAndInput()
 			totalGameReset(); //reset
 		}
 	}
+
+	
 }
 
 //this looks at the bools controlling the screens and will display the correct ones
@@ -425,6 +485,9 @@ void Game::drawTheCorrectScreen()
 		m_message.setPosition(360, 630);
 		m_message.setString("Help Screen [2]");
 		window.draw(m_message);  // write message to the screen
+		m_message.setPosition(360, 670);
+		m_message.setString("Score Board [3]");
+		window.draw(m_message);  // write message to the screen
 	}
 	if (help == true)
 	{
@@ -432,6 +495,28 @@ void Game::drawTheCorrectScreen()
 		m_message.setPosition(200, 300);
 		m_message.setString("         Use the arrow keys to move\n\n      Dodge the ghosts or lose a life\n\n Pick up treasure for a better score \n\nRescue as many friends as possible\n                   for a better score\n\nPress lShift to return to main menu");
 		window.draw(m_message);  // write message to the screen
+	}
+	if (scoreBoard == true)
+	{
+		window.draw(scoreSprite);
+		m_message.setPosition(260, 200);
+		m_message.setString("Score Board");
+		window.draw(m_message);  // write message to the screen
+		if (scoreDisplayed == false)
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				playerDisplay = playerDisplay + std::to_string(i+1) + " " + playerNames[i] + " " + std::to_string(pacman.getGold()) + "\n";
+			}
+			scoreDisplayed = true;
+		}
+		m_message.setPosition(260, 230);
+		m_message.setString(playerDisplay);
+		window.draw(m_message);  // write message to the screen
+		m_message.setPosition(20, 880);
+		m_message.setString("Press Lshift to return to menu");
+		window.draw(m_message);
+
 	}
 	if (acceptName == true)
 	{
@@ -450,6 +535,7 @@ void Game::drawTheCorrectScreen()
 		for (int i = 0; i < MAX_GHOSTS; i++)
 		{
 			ghost[i].draw(window);
+			window.draw(ghost[i].getHealthBar());
 		}
 		m_message.setPosition(2, 2);
 		m_message.setString("Treasure Collected: " + std::to_string(pacman.getGold()));
@@ -468,6 +554,14 @@ void Game::drawTheCorrectScreen()
 			m_message.setString("Invincible: " + std::to_string(pacman.invincibleStatus()));
 			window.draw(m_message);  // write message to the screen
 		}
+	}
+
+
+	if (stopGame == true)
+	{
+		m_message.setPosition((SCREEN_WIDTH/2) - 40, (SCREEN_HEIGHT/2) - 80);
+		m_message.setString("PAUSED");
+		window.draw(m_message);  // write message to the screen
 	}
 
 	if (gameOver == true)

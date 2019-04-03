@@ -117,7 +117,9 @@ void Bullet::collisionsWithGhosts(Ghost t_Ghost[], Cell t_cell[][MAX_COLS])
 	{
 		if (bulletsScreen.getGlobalBounds().intersects(t_Ghost[j].getBody().getGlobalBounds()))
 		{
-			t_Ghost[j].respawnGhost();
+			t_Ghost[j].lowerHealthBar();
+			bulletsScreen.setPosition(storageVector);
+			bulletVelocity = { 0,0 };
 		}
 	}
 	

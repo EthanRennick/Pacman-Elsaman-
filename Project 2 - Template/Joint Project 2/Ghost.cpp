@@ -11,8 +11,13 @@ Ghost::Ghost()
 	loadImages();
 	//setPosition();
 	randomDirectionNumber = 1;
-	health = 4;
+	health = 20;
 	int respawnCount = 40;
+
+	healthBar.setSize(sf::Vector2f(health, 5));
+	healthBar.setFillColor(sf::Color::Green);
+	healthBar.setOutlineThickness(2);
+	healthBar.setOutlineColor(sf::Color::White);
 
 }
 
@@ -54,6 +59,7 @@ void Ghost::draw(sf::RenderWindow & t_window)
 //ghost movement
 void Ghost::move(Cell t_maze[][MAX_COLS])
 {
+	healthBar.setPosition(ghostSprite.getPosition()); //move healthbar with ghost
 	//generate a random number
 	randomDirectionNumber = rand() % 4 + 1;
 	switch (randomDirectionNumber) //switch statement to decide movement
@@ -124,6 +130,7 @@ void Ghost::setGhostPos(int pos1, int pos2)
 //respawn ghost when shot
 void Ghost::respawnGhost()
 {
+	
 	int randomNumber = rand() %4+1;
 	switch (randomNumber)
 	{
@@ -144,4 +151,31 @@ void Ghost::respawnGhost()
 			setGhostPos(640, 640);
 			break;
 	}
+	healthBar.setFillColor(sf::Color::Green);
+	health = 20;
+	healthBar.setSize(sf::Vector2f(health, 5));
+}
+
+void Ghost::lowerHealthBar() //lower ghost health
+{	
+	if (health == 20)
+	{
+		health = 10;
+		healthBar.setSize(sf::Vector2f(health, 5));
+		healthBar.setFillColor(sf::Color::Red);
+	}
+	else if (health == 10)
+	{
+		destroy();
+	}
+}
+
+void Ghost::destroy()
+{
+	respawnGhost();
+}
+
+sf::RectangleShape Ghost::getHealthBar()
+{
+	return healthBar;
 }

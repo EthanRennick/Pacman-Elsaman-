@@ -16,8 +16,7 @@ class Ghost
 	int randomDirectionNumber;
 	int health;
 	int respawnCount;
-
-
+	sf::RectangleShape healthBar;
 
 public:
 	Ghost();
@@ -31,5 +30,8 @@ public:
 	int getCol();
 	void setGhostPos(int pos1, int pos2);
 	void respawnGhost();
+	void lowerHealthBar();
+	void destroy();
+	sf::RectangleShape getHealthBar();
 
 };
