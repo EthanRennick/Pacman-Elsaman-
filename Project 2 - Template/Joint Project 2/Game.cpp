@@ -340,9 +340,9 @@ void Game::setupGhosts()
 //mostly just used for when user wins or loses
 void Game::totalGameReset()
 {
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++) //this will store data for the scoreboard
 	{
-		if (playerNames[i] == (""))
+		if (playerNames[i] == ("")) //look for an empty cell
 		{
 			playerNames[i].operator= (playerName);
 			playerNames[i].operator+=( ": ");
@@ -351,18 +351,18 @@ void Game::totalGameReset()
 			break;
 		}
 	}
-	saveScore();
-	pacman.getBody().setPosition(32, 32);
-	pacman.changeLives(3);
-	pacman.changeScore(0);
-	pacman.treasure = 0;
-	setupGhosts();
-	setUpMaze();
-	menu = true;
+	saveScore(); //save score to text file
+	pacman.getBody().setPosition(32, 32); //reset position of pacman
+	pacman.changeLives(3); //reset lives
+	pacman.changeScore(0); //reset score
+	pacman.treasure = 0; //reset treasure
+	setupGhosts(); //reset ghosts
+	setUpMaze(); //reset maze
+	menu = true; //go back to menu
 	gamePlay = false;
 	gameOver = false;
 	winGame = false;
-	playerName = "";
+	playerName = ""; //abandon last player name
 }
 
 //update the core game loop
@@ -440,6 +440,7 @@ void Game::updateMenuAndInput()
 	{
 		menu = false;
 		scoreBoard = true;
+		scoreDisplayed = false;
 	}
 	//help screen -> menu 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && help == true)
@@ -452,6 +453,7 @@ void Game::updateMenuAndInput()
 	{
 		menu = true;
 		scoreBoard = false;
+		playerDisplay = "";
 	}
 	//game over screen -> menu
 	if (gameOver == true) //let user restart if he presses enter
@@ -497,14 +499,14 @@ void Game::drawTheCorrectScreen()
 	{
 		window.draw(helpSprite);
 		m_message.setPosition(200, 300);
-		m_message.setString("         Use the arrow keys to move\n\n      Dodge the ghosts or lose a life\n\n Pick up treasure for a better score \n\nRescue as many friends as possible\n                   for a better score\n\nPress lShift to return to main menu");
+		m_message.setString("         Use the arrow keys to move\n\n      Dodge the ghosts or lose a life\n\n Pick up treasure for a better score\n\nPick up all the treasure to win \n\nPress Esc to pause the game during gameplay\n\nPress spacebar to throw snowballs at the snowmen\n\nPress lShift to return to main menu");
 		window.draw(m_message);  // write message to the screen
 	}
 	if (scoreBoard == true)
 	{
 		window.draw(scoreSprite);
 		m_message.setPosition(260, 200);
-		m_message.setString("Score Board");
+		m_message.setString("                           Score Board");
 		window.draw(m_message);  // write message to the screen
 		if (scoreDisplayed == false)
 		{
@@ -561,14 +563,14 @@ void Game::drawTheCorrectScreen()
 	}
 
 
-	if (stopGame == true)
+	if (stopGame == true) //display this if the user pauses the game
 	{
 		m_message.setPosition((SCREEN_WIDTH/2) - 40, (SCREEN_HEIGHT/2) - 80);
 		m_message.setString("PAUSED");
 		window.draw(m_message);  // write message to the screen
 	}
 
-	if (gameOver == true)
+	if (gameOver == true)  //display this if the user lost the game
 	{
 		window.draw(gameOverSprite);
 		m_message.setPosition(300, 550);
@@ -576,7 +578,7 @@ void Game::drawTheCorrectScreen()
 		window.draw(m_message);  // write message to the screen
 	}
 
-	if (winGame == true)
+	if (winGame == true) //display this if the user won the game
 	{
 		window.draw(victorySprite);
 		m_message.setPosition(300, 700);
@@ -611,29 +613,31 @@ void Game::bulletFiring()
 		{
 			//lower the  counters, and if it gets to 0, set ready to fire
 			
-			bullets[i].waitToFireCounter--;
-			if (bullets[i].waitToFireCounter <= 0)
+			bullets[i].waitToFireCounter--; //decrement counter
+			if (bullets[i].waitToFireCounter <= 0) //if it gets to zero
 			{
-				bullets[i].readyToFire = true;
+				bullets[i].readyToFire = true; //bullet is ready to fire once more
 			}
 		}
 	}
 }
 
+//writing player data to file
 void Game::saveScore()
 {
-	std::ofstream outputFile;
+	//this function will write the player's score and lives to a text file when a game is concluded (whether loss or victory)
+	std::ofstream outputFile; //this is an output file
 	outputFile.open("playerScores.txt"); //create a file 
 	if (outputFile.is_open()) //check if open
 	{
 		pacman.writeData(outputFile); //write the data
 		outputFile << std::endl;
 
-		outputFile.close();
-		std::cout << "Text file write success! \n";
+		outputFile.close(); //close file
+		std::cout << "Text file write success! \n"; //if it went okay, success
 	}
 	else
 	{
-		std::cout << "Text file write failure :c \n";
+		std::cout << "Text file write failure :c \n"; //if not, then there's an issue to look at
 	}
 }
