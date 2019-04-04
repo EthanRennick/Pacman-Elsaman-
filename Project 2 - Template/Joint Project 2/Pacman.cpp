@@ -172,3 +172,11 @@ sf::Vector2f Pacman::getPlayerLookDirection()
 {
 	return playerLookDirection;
 }
+
+void Pacman::writeData(std::ofstream &outputFile)
+{
+	//this save's the player's data to file
+	outputFile << std::to_string(lives) + " , ";
+	outputFile << std::to_string(treasure) + "";
+
+}

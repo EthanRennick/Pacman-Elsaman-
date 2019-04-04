@@ -13,6 +13,7 @@
 #include "Globals.h"
 #include "Particles.h"
 #include <string>
+#include<fstream>
 //sound
 #include <SFML/Audio/SoundBuffer.hpp>
 #include<SFML/Audio/Sound.hpp>
@@ -93,5 +94,6 @@ public:	  // declaration of member functions
 	void updateMenuAndInput();
 	void drawTheCorrectScreen();
 	void bulletFiring();
+	void saveScore();
 };
 

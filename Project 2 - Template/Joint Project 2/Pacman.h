@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Cell.h"
 #include"Particles.h"
+#include <fstream>
 //sound
 #include <SFML/Audio/SoundBuffer.hpp>
 #include<SFML/Audio/Sound.hpp>
@@ -45,5 +46,6 @@ public:
 	void changeLives(int t_value);
 	int invincibleStatus();
 	sf::Vector2f getPlayerLookDirection();
+	void writeData(std::ofstream &outputFile);
 
 };

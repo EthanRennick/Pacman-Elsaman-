@@ -342,12 +342,16 @@ void Game::totalGameReset()
 {
 	for (int i = 0; i < 10; i++)
 	{
-		if (playerNames[i] == "")
+		if (playerNames[i] == (""))
 		{
-			playerNames[i] = playerName;
+			playerNames[i].operator= (playerName);
+			playerNames[i].operator+=( ": ");
+			playerNames[i].operator+=(std::to_string(pacman.getGold()));
+
 			break;
 		}
 	}
+	saveScore();
 	pacman.getBody().setPosition(32, 32);
 	pacman.changeLives(3);
 	pacman.changeScore(0);
@@ -506,7 +510,7 @@ void Game::drawTheCorrectScreen()
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				playerDisplay = playerDisplay + std::to_string(i+1) + " " + playerNames[i] + " " + std::to_string(pacman.getGold()) + "\n";
+				playerDisplay = playerDisplay + std::to_string(i+1) + " " + playerNames[i] + "\n";
 			}
 			scoreDisplayed = true;
 		}
@@ -613,5 +617,23 @@ void Game::bulletFiring()
 				bullets[i].readyToFire = true;
 			}
 		}
+	}
+}
+
+void Game::saveScore()
+{
+	std::ofstream outputFile;
+	outputFile.open("playerScores.txt"); //create a file 
+	if (outputFile.is_open()) //check if open
+	{
+		pacman.writeData(outputFile); //write the data
+		outputFile << std::endl;
+
+		outputFile.close();
+		std::cout << "Text file write success! \n";
+	}
+	else
+	{
+		std::cout << "Text file write failure :c \n";
 	}
 }
