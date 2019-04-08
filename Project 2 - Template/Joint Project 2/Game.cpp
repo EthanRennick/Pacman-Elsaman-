@@ -147,7 +147,7 @@ void Game::run()
 				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
-					if (gamePlay == true)
+					if (gamePlay == true) //pause button
 					{
 						if (event.key.code == sf::Keyboard::Escape)
 						{
@@ -163,7 +163,7 @@ void Game::run()
 					}
 				}
 			}
-			if (acceptName == true)
+			if (acceptName == true) //string input for your name
 			{
 				if (event.type == sf::Event::TextEntered)
 				{
@@ -173,10 +173,14 @@ void Game::run()
 					{
 						playerName.pop_back();
 					}
-					else if (event.text.unicode < 128)
+					else if (playerName.length() < 10)
 					{
-						playerName.push_back((char)event.text.unicode);
+						 if (event.text.unicode < 128)
+						{
+							playerName.push_back((char)event.text.unicode);
+						}
 					}
+				
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
 				{
@@ -209,17 +213,10 @@ void Game::run()
 void Game::update()
 // This function takes the keyboard input and updates the game world
 {
-	
 	updateMenuAndInput(); //handles the key input on different screens
-	if (stopGame == false)
-	{
-		updateGamePlay(); //this is the main gameplay loop that needs to run
-		for (int i = 0; i < MAX_BULLETS; i++)
-		{
-			bullets[i].bulletMovement();	//move bullets
-			bullets[i].collisionsWithGhosts(ghost, maze);
-		}
-	}
+
+	updateGamePlay(); //this is the main gameplay loop that needs to run
+	
 }
 
 void Game::draw()
@@ -227,15 +224,7 @@ void Game::draw()
 {
 	// Clear the screen and draw your game sprites
 	window.clear();
-	drawTheCorrectScreen();
-
-	for (int i = 0; i < MAX_BULLETS; i++)
-	{
-		if (bullets[i].getBulletBody().getPosition() != bullets[i].storageVector)
-		{
-			window.draw(bullets[i].getBulletBody());
-		}
-	}
+	drawTheCorrectScreen(); //draw things relevant to each screen
 	window.display();
 }
 
@@ -370,46 +359,55 @@ void Game::updateGamePlay()
 {
 	if (gamePlay == true)
 	{
-		counter--;
-		for (int i = 0; i < MAX_GHOSTS; i++)
+		if (stopGame == false)
 		{
-			ghostCounter[i]--;
-		}
-
-		// update any game variables here ...
-		if (counter == 0)
-		{
-			pacman.move(maze); //pacman movement
-			pacman.collectGold(maze); //pacman gold collecting (pellets)
-			counter = 10; //reset pacman timer
-		}
-
-		//particles
-		pacman.playerParticlesGold.Update();
-		pacman.playerParticlesBlood.Update();
-
-		for (int i = 0; i < MAX_GHOSTS; i++)
-		{
-			if (ghostCounter[i] == 0) //if timer is empty
+			for (int i = 0; i < MAX_BULLETS; i++)
 			{
-				ghost[i].move(maze); //ghost moving
-				pacman.collisionWithGhosts(ghost[i].getRow(), ghost[i].getCol(), gameOver, gamePlay); //has pacman collided with ghost?
-				ghostCounter[i] = 10; //reset timer
+				bullets[i].bulletParticles.Update();
+				bullets[i].bulletMovement();	//move bullets
+				bullets[i].collisionsWithThings(ghost, maze);
+			}
+			counter--;
+			for (int i = 0; i < MAX_GHOSTS; i++)
+			{
+				ghostCounter[i]--;
+			}
+
+			// update any game variables here ...
+			if (counter == 0)
+			{
+				pacman.move(maze); //pacman movement
+				pacman.collectGold(maze); //pacman gold collecting (pellets)
+				counter = 10; //reset pacman timer
+			}
+
+			//particles
+			pacman.playerParticlesGold.Update();
+			pacman.playerParticlesBlood.Update();
+
+
+			for (int i = 0; i < MAX_GHOSTS; i++)
+			{
+				if (ghostCounter[i] == 0) //if timer is empty
+				{
+					ghost[i].move(maze); //ghost moving
+					pacman.collisionWithGhosts(ghost[i].getRow(), ghost[i].getCol(), gameOver, gamePlay); //has pacman collided with ghost?
+					ghostCounter[i] = 10; //reset timer
+				}
+			}
+
+			if (pacman.getLives() == 0) //if pacman dies, display bad screen
+			{
+				gamePlay = false;
+				gameOver = true;
+			}
+
+			if (pacman.treasure >= MAX_GOLD) //if elsaman collected all gold, she wins
+			{
+				winGame = true;
+				gamePlay = false;
 			}
 		}
-
-		if (pacman.getLives() == 0) //if pacman dies, display bad screen
-		{
-			gamePlay = false;
-			gameOver = true;
-		}
-
-		if (pacman.treasure >= MAX_GOLD) //if elsaman collected all gold, she wins
-		{
-			winGame = true;
-			gamePlay = false;
-		}
-	
 
 	}
 }
@@ -441,6 +439,12 @@ void Game::updateMenuAndInput()
 		menu = false;
 		scoreBoard = true;
 		scoreDisplayed = false;
+	}
+
+	//exit
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) && menu == true)
+	{
+		window.close();
 	}
 	//help screen -> menu 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && help == true)
@@ -481,6 +485,8 @@ void Game::drawTheCorrectScreen()
 {
 	if (menu == true)
 	{
+		m_message.setFillColor(sf::Color::White);
+
 		window.draw(menuSprite);
 		m_message.setPosition(375, 550);
 		m_message.setString("Main Menu");
@@ -493,6 +499,9 @@ void Game::drawTheCorrectScreen()
 		window.draw(m_message);  // write message to the screen
 		m_message.setPosition(360, 670);
 		m_message.setString("Score Board [3]");
+		window.draw(m_message);  // write message to the screen
+		m_message.setPosition(390, 710);
+		m_message.setString("Exit [4]");
 		window.draw(m_message);  // write message to the screen
 	}
 	if (help == true)
@@ -543,22 +552,30 @@ void Game::drawTheCorrectScreen()
 			ghost[i].draw(window);
 			window.draw(ghost[i].getHealthBar());
 		}
-		m_message.setPosition(2, 2);
+		m_message.setFillColor(sf::Color::Black);
+		m_message.setPosition(0, 2);
 		m_message.setString("Treasure Collected: " + std::to_string(pacman.getGold()));
 		window.draw(m_message);  // write message to the screen
 
-		m_message.setPosition(2, 30);
+		m_message.setPosition(300, 2);
 		m_message.setString("Lives: " + std::to_string(pacman.getLives()));
 		window.draw(m_message);  // write message to the screen
 
-		m_message.setPosition(2, 58);
+		m_message.setPosition(500, 2);
 		m_message.setString("Player name: " + playerName);
 		window.draw(m_message);  // write message to the screen
 		if (pacman.invincibleStatus() > 0)
 		{
-			m_message.setPosition(2, 86);
+			m_message.setPosition(360, 34);
 			m_message.setString("Invincible: " + std::to_string(pacman.invincibleStatus()));
 			window.draw(m_message);  // write message to the screen
+		}
+
+		for (int i = 0; i < MAX_BULLETS; i++)
+		{
+			bullets[i].bulletParticles.Draw(window);
+			window.draw(bullets[i].getBulletBody());
+		
 		}
 	}
 
@@ -572,6 +589,8 @@ void Game::drawTheCorrectScreen()
 
 	if (gameOver == true)  //display this if the user lost the game
 	{
+		m_message.setFillColor(sf::Color::White);
+
 		window.draw(gameOverSprite);
 		m_message.setPosition(300, 550);
 		m_message.setString("You have lost. Shoddy work, " + playerName + "\nScore : " + std::to_string(pacman.getGold()) + "\nPress enter to return to main menu");
@@ -580,6 +599,8 @@ void Game::drawTheCorrectScreen()
 
 	if (winGame == true) //display this if the user won the game
 	{
+		m_message.setFillColor(sf::Color::White);
+
 		window.draw(victorySprite);
 		m_message.setPosition(300, 700);
 		m_message.setString("You have won! Good work, " + playerName + "\nScore : " + std::to_string(pacman.getGold()) + "\nPress enter to return to main menu");

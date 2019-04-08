@@ -111,20 +111,23 @@ void Bullet::bulletMovement()
 }
 
 //collisions with ghost enemies
-void Bullet::collisionsWithGhosts(Ghost t_Ghost[], Cell t_cell[][MAX_COLS])
+void Bullet::collisionsWithThings(Ghost t_Ghost[], Cell t_cell[][MAX_COLS])
 {
 	for (int j = 0; j < MAX_GHOSTS; j++)
 	{
 		if (bulletsScreen.getGlobalBounds().intersects(t_Ghost[j].getBody().getGlobalBounds()))
 		{
+			bulletParticles.Initialise(sf::Vector2f(bulletsScreen.getPosition()));
 			t_Ghost[j].lowerHealthBar();
 			bulletsScreen.setPosition(storageVector);
 			bulletVelocity = { 0,0 };
 		}
 	}
 	
+	//checks collisions with walls
 	if (t_cell[row][col].typeOfCell() == 1)
 	{
+		bulletParticles.Initialise(sf::Vector2f(bulletsScreen.getPosition()));
 		bulletsScreen.setPosition(storageVector);
 		bulletVelocity = { 0.0, 0.0 };
 		readyToFire = true;

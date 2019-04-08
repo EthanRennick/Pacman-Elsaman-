@@ -37,19 +37,19 @@ sf::Sprite Cell::getSprite()
 void Cell::loadTextures()
 {
 	//make empty tile the normal black screen
-	if (!emptyTexture.loadFromFile("Assets/Images/emptyCell.png"))
+	if (!emptyTexture.loadFromFile("Assets/Images/ice.png"))
 	{
 		std::cout << "error with empty cell image file";
 	}
 
 
-	if (!wallTexture.loadFromFile("Assets/Images/wallCell.jpg"))
+	if (!wallTexture.loadFromFile("Assets/Images/Snow_Block.png"))
 	{
 		std::cout << "error with wall image file";
 	}
 
 
-	if (!pelletTexture.loadFromFile("Assets/Images/bigpill.png"))
+	if (!pelletTexture.loadFromFile("Assets/Images/gold.png"))
 	{
 		std::cout << "error with pellet cell image file";
 	}

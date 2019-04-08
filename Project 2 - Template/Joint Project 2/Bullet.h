@@ -6,6 +6,7 @@
 #include "Pacman.h"
 #include "Ghost.h"
 #include "Cell.h"
+#include "Particles.h"
 
 class Bullet
 {
@@ -20,6 +21,7 @@ public:
 
 public:
 	Bullet(); //default constructor
+	ParticleSystemSnow bulletParticles;
 	void loadImage();
 	sf::Sprite getBulletBody();
 	int getWaitToFire();
@@ -33,6 +35,6 @@ public:
 	void setPos(sf::Vector2f t_position);
 	void bulletMovement(); //move bullet if fired
 
-	void collisionsWithGhosts(Ghost t_ghost[], Cell t_cell[][MAX_COLS]);
+	void collisionsWithThings(Ghost t_ghost[], Cell t_cell[][MAX_COLS]);
 
 };

@@ -16,6 +16,7 @@ Pacman::Pacman()
 	score = 0;
 	alive = true;
 	invincible = 50; //invulnerability timer
+
 	//load music
 	oofBuffer.loadFromFile("Assets/Audio/oof.wav");
 	oofSound.setBuffer(oofBuffer);
